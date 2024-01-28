@@ -1,5 +1,6 @@
 class DescriptiveStatistics {
-    constructor(data, midpoints, frequencies, lowerLimit, cumulativeFrequency, frequency, classHeight) {
+    constructor(data, midpoints, frequencies, lowerLimit, cumulativeFrequency, frequency, classHeight,
+        modalFrequency, precedingFrequency, succeedingFrequency) {
         this.data = data;
         this.midpoints = midpoints;
         this.frequencies = frequencies;
@@ -7,6 +8,9 @@ class DescriptiveStatistics {
         this.cumulativeFrequency = cumulativeFrequency;
         this.frequency = frequency;
         this.classHeight = classHeight;
+        this.modalFrequency = modalFrequency;
+        this.precedingFrequency = precedingFrequency;
+        this.succeedingFrequency = succeedingFrequency;
         this.n = data.length;
     }
 
@@ -30,6 +34,10 @@ class DescriptiveStatistics {
         return this.calcMedianGrouped();
     }
 
+    // Getter for mode calculation in ungrouped data
+    get calculate_mode_ungrp() {
+        return this.calcModeUngrp();
+    }
     // Method to calculate mean for ungrouped data
     calcMeanUngrp() {
         return this.data.reduce((sum, value) => sum + value, 0) / this.n;
@@ -60,21 +68,42 @@ class DescriptiveStatistics {
         return this.lowerLimit + ((target - this.cumulativeFrequency) / this.frequency) * this.classHeight;
     }
 
-    // Additional methods for mode, etc. can be added here
+    calcModeUngrp() {
+        let maxFrequency = 0;
+        let mode;
+
+        for (let i = 0; i < this.data.length; i++) {
+            if (this.frequencies[i] > maxFrequency) {
+                maxFrequency = this.frequencies[i];
+                mode = this.data[i];
+            }
+        }
+
+        return mode;
+    }
+
+    
 }
 
 // Example usage:
-const data_set = [1, 2, 3, 4, 5, 6, 7];
-const midpoints = [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5];
-const frequencies = [2, 1, 2, 1, 1, 3, 5];
+const data_set = [1, 2, 3, 4, 5, 6];
+const midpoints = [1.5, 2.5, 3.5, 4.5, 5.5, 6.5];
+const frequencies = [1, 1, 2, 1, 11, 3];
 const lowerLimit = 2;
 const cumulativeFrequency = 4;
 const frequency = 2;
 const classHeight = 2;
+const modalFrequency = 3;
+const precedingFrequency = 1;
+const succeedingFrequency = 1;
 
-const stats_calculator = new DescriptiveStatistics(data_set, midpoints, frequencies, lowerLimit, cumulativeFrequency, frequency, classHeight);
+const stats_calculator = new DescriptiveStatistics(
+    data_set, midpoints, frequencies, lowerLimit, cumulativeFrequency, frequency, classHeight,
+    modalFrequency, precedingFrequency, succeedingFrequency
+);
 
 console.log("Mean (Ungrouped):", stats_calculator.calculate_mean_ungrp);
 console.log("Mean (Grouped):", stats_calculator.calculate_mean_grp);
-console.log("Median Ungrouped:", stats_calculator.calculate_median_ungrp);
-console.log("Median Grouped:", stats_calculator.calculate_median_grp);
+console.log("Median (Ungrouped):", stats_calculator.calculate_median_ungrp);
+console.log("Median (Grouped):", stats_calculator.calculate_median_grp);
+console.log("Mode (Ungrouped):", stats_calculator.calculate_mode_ungrp);
